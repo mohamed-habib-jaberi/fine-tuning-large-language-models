@@ -1,0 +1,27 @@
+# Secrets et configuration locale
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python et notebooks
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+.DS_Store
+
+# Données, modèles et sorties générées
+datasets/
+models/
+checkpoints/
+LLaMA-Factory/
+wandb/
+*.safetensors
+*.pt
+*.pth
+nohup.out
+vllm_tokens.txt
+locust_results.html
