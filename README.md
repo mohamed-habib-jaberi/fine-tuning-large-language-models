@@ -115,9 +115,3 @@ llamafactory-cli train examples/train_lora/news_finetune.yaml
 ```
 
 Les données, clés API, adaptateurs et checkpoints restent hors du dépôt Git.
-
-## Crédits et droits d’utilisation
-
-Le notebook attribue le tutoriel original à [Abu Bakr Soliman](https://www.linkedin.com/in/bakrianoo/). Il cite également cet [article sur le filtrage de caractères chinois dans Qwen2.5](https://jupyter267.medium.com/how-to-eliminate-the-chance-of-generating-chinese-in-qwen-2-5-2cf919bb0fdc).
-
-Aucune licence n’est fournie dans le dossier initial. Vérifier les droits de réutilisation du notebook, du dataset et du modèle avant redistribution ou usage commercial.
