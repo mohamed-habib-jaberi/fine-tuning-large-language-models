@@ -2,7 +2,7 @@
 
 Projet pédagogique de fine-tuning de **Qwen2.5-1.5B-Instruct** avec **LoRA** et **LLaMA-Factory**, à partir d’articles en arabe. Le workflow est présenté dans [`llm_finetuning.ipynb`](llm_finetuning.ipynb) et prévu pour **Google Colab avec un GPU NVIDIA**.
 
-Pour préparer un entretien, consulter les [notes en français](NOTES_ENTRETIEN.md) : explication du processus, techniques et questions pratiques.
+Pour préparer un entretien, consulter les [notes en français](NOTES.md) : explication du processus, techniques et questions pratiques.
 
 ## Objectifs
 
@@ -112,7 +112,7 @@ llamafactory-cli train examples/train_lora/news_finetune.yaml
 ```text
 .
 ├── README.md
-├── NOTES_ENTRETIEN.md
+├── NOTES.md
 ├── llm_finetuning.ipynb
 └── .gitignore
 ```
