@@ -280,6 +280,6 @@ Phrase utile pour répondre à une question sur une étape non exécutée : « L
 
 ## Adaptation du dépôt
 
-Les chemins des données et du modèle sont centralisés dans `config.json`. Le notebook enregistre automatiquement les datasets et génère le YAML. Les anciens comptes de suivi, les destinations de publication et les résultats écrits en dur ne servent plus à l’exécution. Les anciennes sorties ont été effacées pour permettre une nouvelle exécution traçable. La provenance est documentée dans `SOURCES.md`.
+Les chemins des données et du modèle sont centralisés dans `config.json`. Le notebook enregistre automatiquement les datasets et génère le YAML. Les anciens comptes de suivi, les destinations de publication et les résultats écrits en dur ne servent plus à l’exécution. Les anciennes sorties ont été effacées pour permettre une nouvelle exécution traçable.
 
 Ces corrections ne démontrent pas un gain de qualité : la compatibilité des dépendances et l’entraînement complet restent à vérifier sur GPU. Le découpage par article, la validation des réponses synthétiques et la reprise sans doublons restent des améliorations nécessaires.

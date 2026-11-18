@@ -111,7 +111,7 @@ llamafactory-cli train examples/train_lora/news_finetune.yaml
 - Les boucles de distillation ajoutent les réponses au fichier ; prévoir déduplication et reprise avant de les relancer.
 - Libérer la mémoire Transformers avant de lancer vLLM si nécessaire. Les métriques du tutoriel ont été retirées : mesurer qualité, latence et débit sur son propre environnement.
 
-Voir [NOTES.md](NOTES.md) pour les techniques et améliorations, et [SOURCES.md](SOURCES.md) pour la provenance technique.
+Voir [NOTES.md](NOTES.md) pour les techniques et améliorations.
 
 ## Structure du dépôt
 
@@ -119,7 +119,6 @@ Voir [NOTES.md](NOTES.md) pour les techniques et améliorations, et [SOURCES.md]
 .
 ├── README.md
 ├── NOTES.md
-├── SOURCES.md
 ├── config.json
 ├── llm_finetuning.ipynb
 └── .gitignore
