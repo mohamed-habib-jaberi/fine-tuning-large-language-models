@@ -62,16 +62,18 @@ Les exemples sont convertis au format Alpaca (`system`, `instruction`, `input`, 
    - `huggingface` : token Hugging Face ; droit d’écriture si publication des checkpoints.
    - `wandb` : clé Weights & Biases.
    - `openai-colab` : clé OpenAI pour les cellules de comparaison et de distillation.
-5. Adapter le chemin des données :
+5. Importer `config.json` dans Colab, puis adapter ses paramètres. La cellule de configuration charge ce fichier (ou le chemin indiqué par `PROJECT_CONFIG`). Exemple de valeurs :
 
-   ```python
-   data_dir = "/gdrive/MyDrive/llm-finetuning"
-   base_model_id = "Qwen/Qwen2.5-1.5B-Instruct"
+   ```json
+   {
+   "data_dir": "/content/drive/MyDrive/llm-finetuning",
+   "base_model_id": "Qwen/Qwen2.5-1.5B-Instruct"
+   }
    ```
 
 6. Exécuter les exemples de génération, puis les cellules de distillation si `sft.jsonl` n’est pas déjà disponible. Ces cellules effectuent des appels API facturés ; vérifier les tarifs actuels, les montants du notebook étant des valeurs historiques. Elles ajoutent les réponses à `sft.jsonl` : les relancer sur les mêmes données peut créer des doublons.
 7. Convertir les exemples et créer `train.json` et `val.json`.
-8. Enregistrer `news_finetune_train` et `news_finetune_val` dans `/content/LLaMA-Factory/data/dataset_info.json`, avec les chemins correspondant à son Drive.
+8. Exécuter la cellule qui enregistre automatiquement les deux datasets dans `dataset_info.json`.
 9. Adapter la configuration YAML, puis lancer l’entraînement.
 10. Charger les adaptateurs pour comparer les sorties, puis exécuter les sections vLLM et Locust si nécessaire.
 
@@ -87,7 +89,7 @@ Les exemples sont convertis au format Alpaca (`system`, `instruction`, `input`, 
 | Taux d’apprentissage | `1e-4` |
 | Époques | 3 |
 | Scheduler / warmup | Cosine / 0,1 |
-| Précision | BF16 |
+| Précision | BF16 si compatible, sinon FP16 sur GPU |
 | Évaluation / sauvegarde | Toutes les 100 / 500 étapes |
 
 La configuration est écrite dans `examples/train_lora/news_finetune.yaml` du clone LLaMA-Factory :
@@ -97,15 +99,19 @@ cd /content/LLaMA-Factory
 llamafactory-cli train examples/train_lora/news_finetune.yaml
 ```
 
-## Points à adapter avant l’exécution
+## Configuration et limites
 
-- La cellule « Configure LLaMA-Factory » contient un extrait JSON dans une cellule de code : il faut le reporter dans `dataset_info.json`, et non l’exécuter comme du Python.
-- Les chemins de `dataset_info.json`, du YAML, du chargement des adaptateurs et du serveur vLLM sont écrits en dur. Les modifier en plus de `data_dir`.
-- Le YAML contient `push_to_hub: true` et `export_hub_model_id: "bakrianoo/news-analyzer"`. Remplacer ce dépôt par le sien ou désactiver la publication avec `push_to_hub: false`.
-- BF16 nécessite un GPU compatible. Adapter la précision et la taille des séquences à son matériel.
-- LLaMA-Factory est cloné depuis sa branche courante, alors que plusieurs dépendances sont anciennes. La compatibilité de cet ensemble n’a pas été validée ; pour rendre une exécution reproductible, conserver le commit et les versions utilisés lors d’un entraînement réussi.
-- Installer Locust avant les tests de charge (`pip install locust`). La section vLLM nécessite assez de mémoire GPU disponible, notamment après les générations Transformers.
-- Les exemples d’évaluation et de débit du notebook ne constituent pas une mesure validée de qualité sur un jeu de test indépendant. Aucune exécution d’entraînement n’a été réalisée pour cette préparation du dépôt.
+- `config.json` centralise le modèle, les données, la taille d’entraînement, le chemin LLaMA-Factory et le nom de l’expérience. Le clone est installé dans `/content/LLaMA-Factory` ; changer également la cellule d’installation si un autre emplacement est utilisé.
+- La publication Hugging Face est désactivée par défaut. Pour l’activer, renseigner `hub_model_id` avec son propre espace de noms et utiliser un token autorisé à écrire.
+- Le YAML est généré à partir de cette configuration ; la précision choisit BF16 sur les GPU compatibles, sinon FP16 sur GPU. Un GPU NVIDIA reste nécessaire pour le workflow d’entraînement et vLLM prévu ici.
+- Importer `config.json` dans Colab séparément du notebook. Le notebook ne télécharge pas automatiquement les fichiers du dépôt.
+- Les dépendances historiques et la branche courante de LLaMA-Factory n’ont pas été validées ensemble. Fixer le commit et les versions après une exécution réussie.
+- Les réponses générées sont parsées, mais leur conformité Pydantic et leur exactitude factuelle doivent encore être contrôlées.
+- Le découpage actuel est effectué par exemple. Séparer les articles sources avant génération pour éviter les fuites entre entraînement et validation.
+- Les boucles de distillation ajoutent les réponses au fichier ; prévoir déduplication et reprise avant de les relancer.
+- Libérer la mémoire Transformers avant de lancer vLLM si nécessaire. Les métriques du tutoriel ont été retirées : mesurer qualité, latence et débit sur son propre environnement.
+
+Voir [NOTES.md](NOTES.md) pour les techniques et améliorations, et [SOURCES.md](SOURCES.md) pour la provenance technique.
 
 ## Structure du dépôt
 
@@ -113,6 +119,8 @@ llamafactory-cli train examples/train_lora/news_finetune.yaml
 .
 ├── README.md
 ├── NOTES.md
+├── SOURCES.md
+├── config.json
 ├── llm_finetuning.ipynb
 └── .gitignore
 ```

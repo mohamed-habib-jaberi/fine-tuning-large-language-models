@@ -65,7 +65,7 @@ Dans la boucle suivante, `rec = json.loads(line.strip())` lit l’un de ces exem
 
 ### Étape E — Construire le format Alpaca
 
-`llm_finetunning_data.append({...})` ajoute un dictionnaire représentant un exemple d’entraînement.
+`finetuning_data.append({...})` ajoute un dictionnaire représentant un exemple d’entraînement.
 
 | Champ Alpaca | Explication simple |
 | --- | --- |
@@ -129,7 +129,7 @@ Le notebook utilise `lora_rank: 64` et `lora_target: all`, c’est-à-dire toute
 
 **Pourquoi LoRA ?** Réduire les paramètres entraînables, les états de l’optimiseur et la taille des artefacts sauvegardés. Le modèle de base et les activations occupent toujours de la mémoire GPU.
 
-**LoRA ou QLoRA ?** QLoRA combine des adaptateurs LoRA avec un modèle de base quantifié, souvent en 4 bits. Ici, la configuration montre LoRA avec BF16 ; l’import de `BitsAndBytesConfig` ne suffit pas à faire de ce projet un entraînement QLoRA.
+**LoRA ou QLoRA ?** QLoRA combine des adaptateurs LoRA avec un modèle de base quantifié, souvent en 4 bits. Ici, la configuration montre LoRA avec BF16 ou FP16 selon le GPU ; l’import de `BitsAndBytesConfig` ne suffit pas à faire de ce projet un entraînement QLoRA.
 
 ### BF16 et quantification
 
@@ -193,7 +193,7 @@ Locust simule des utilisateurs qui envoient des requêtes HTTP. L’exemple pré
 
 Mesurer les latences médiane, p95 et p99, les erreurs et le débit. Le p95 est la latence en dessous de laquelle se trouvent 95 % des requêtes. Distinguer le débit global du serveur et la vitesse d’une seule génération.
 
-Les textes Faker testent la charge, pas la qualité sur de vrais articles. Le calcul avec un nombre de tokens divisé par 60 reste approximatif si l’on ne mesure pas la durée réelle et si l’on ne distingue pas entrée et sortie. Pour un benchmark solide : échauffement, matériel documenté, mêmes longueurs, même concurrence et comptage des requêtes échouées.
+Les textes Faker testent la charge, pas la qualité sur de vrais articles. Un calcul avec un nombre de tokens divisé par 60 reste approximatif si l’on ne mesure pas la durée réelle et si l’on ne distingue pas entrée et sortie. Pour un benchmark solide : échauffement, matériel documenté, mêmes longueurs, même concurrence et comptage des requêtes échouées.
 
 ### Coût
 
@@ -214,7 +214,7 @@ Le coût total comprend aussi le GPU pour l’entraînement, l’inférence, le 
 - **Identifiants** : le compteur `ix` recommence à zéro dans les deux boucles ; employer des identifiants uniques et une clé article / tâche pour reprendre la génération.
 - **Reproductibilité** : fixer les versions et le commit de LLaMA-Factory, conserver la configuration et les caractéristiques du GPU.
 - **Prompt et réponse** : harmoniser les blocs JSON et vérifier que la troncature ne coupe pas la réponse cible.
-- **Configuration** : adapter tous les chemins Drive et le dépôt Hugging Face avant l’exécution ; certaines valeurs désignent le compte du tutoriel.
+- **Configuration** : adapter tous les chemins Drive et le dépôt Hugging Face avant l’exécution ; la configuration est centralisée dans `config.json`, et la publication Hugging Face est désactivée par défaut.
 - **Inférence** : libérer la mémoire des modèles Transformers avant de lancer vLLM si nécessaire.
 - **Filtrage de caractères** : le filtre de caractères chinois est une heuristique qui peut bloquer des sorties légitimes ; privilégier d’abord des données et consignes adaptées.
 
@@ -277,3 +277,9 @@ Pouvoir expliquer sans lire :
 7. Les métriques à mesurer et les limites du notebook.
 
 Phrase utile pour répondre à une question sur une étape non exécutée : « Le notebook prévoit cette étape. Pour la valider, voici le protocole que je mettrais en place… »
+
+## Adaptation du dépôt
+
+Les chemins des données et du modèle sont centralisés dans `config.json`. Le notebook enregistre automatiquement les datasets et génère le YAML. Les anciens comptes de suivi, les destinations de publication et les résultats écrits en dur ne servent plus à l’exécution. Les anciennes sorties ont été effacées pour permettre une nouvelle exécution traçable. La provenance est documentée dans `SOURCES.md`.
+
+Ces corrections ne démontrent pas un gain de qualité : la compatibilité des dépendances et l’entraînement complet restent à vérifier sur GPU. Le découpage par article, la validation des réponses synthétiques et la reprise sans doublons restent des améliorations nécessaires.
